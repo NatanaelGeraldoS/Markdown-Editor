@@ -10,3 +10,6 @@ button:active {
   background: transparent;
   border: 1px solid grey;
 }
+.main-color {
+  color: #0b5ea0;
+}

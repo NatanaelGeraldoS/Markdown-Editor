@@ -41,71 +41,33 @@ class App extends Component {
     this.setState({ text: file.value });
   }
   MaxSize(event) {
-    var Editor = "editor-side"
-    console.log("max");
+    var Editor = "Editor"
+    console.log(event.currentTarget.value);
     if (event.currentTarget.value === Editor) {
       this.setState({ editorFullScreen: true, viewerFullScreen: false })
     }
     else {
       this.setState({ editorFullScreen: false, viewerFullScreen: true })
+      console.log(this.state.viewerFullScreen)
     }
   }
-  MinSize(event) {
-    var Editor = "editor-side"
+  MinSize() {
     console.log("min");
-    if (event.currentTarget.value === Editor) {
-      this.setState({ editorFullScreen: false, viewerFullScreen: false })
-    }
-    else {
-      this.setState({ editorFullScreen: false, viewerFullScreen: false })
-    }
+    this.setState({ editorFullScreen: false, viewerFullScreen: false })
   }
   render() {
 
 
     return (
       <div>
-        <h1 className='text-center'>Markdown Viewer</h1>
-        <h5 className='text-center'>By Natanael Geraldo</h5>
-        <div className='container row mx-auto justify-content-evenly'>
-          {console.log(this.state.editorFullScreen)}
+        <Header />
+        <div className='container row mx-auto justify-content-evenly mt-5'>
           <div id='editor-side' className={`card p-0 ${this.state.editorFullScreen ? 'col-12' : this.state.viewerFullScreen ? 'd-none' : 'col-md-5'}`} >
-            <div className="card-header d-flex justify-content-between">
-              <div>
-                <FontAwesomeIcon icon={faPenToSquare} />
-                <span className='px-3'>Editor</span>
-              </div>
-              <div>
-                <button onClick={this.state.editorFullScreen ? this.MinSize : this.MaxSize} value="editor-side">
-                  {this.state.editorFullScreen
-                    ?
-                    <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
-                    :
-                    <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-                  }
-                </button>
-
-              </div>
-            </div>
+            <HeaderCard FullScreen={this.state.editorFullScreen} MinSize={this.MinSize} MaxSize={this.MaxSize} Value={"Editor"} Icon={faPenToSquare} />
             <textarea className='w-100 card p-2' onChange={this.transferMarkdown} style={{ minHeight: "500px" }}></textarea>
           </div>
           <div id='viewer-side' className={`card p-0 ${this.state.viewerFullScreen ? 'col-12' : this.state.editorFullScreen ? 'd-none' : 'col-md-5'}`}>
-            <div className="card-header d-flex justify-content-between">
-              <div>
-                <FontAwesomeIcon icon={faDesktop} />
-                <span className='px-3'>Viewer</span>
-              </div>
-              <div>
-                <button onClick={this.state.viewerFullScreen ? this.MinSize : this.MaxSize} value="viewer-side">
-                  {this.state.viewerFullScreen
-                    ?
-                    <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
-                    :
-                    <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-                  }
-                </button>
-              </div>
-            </div>
+            <HeaderCard FullScreen={this.state.viewerFullScreen} MinSize={this.MinSize} MaxSize={this.MaxSize} Value={"Viewer"} Icon={faDesktop} />
             <ReactMarkdown className='w-100 p-2' remarkPlugins={[remarkToc, remarkGfm]}>{this.state.text}</ReactMarkdown>
           </div>
         </div>
@@ -113,6 +75,37 @@ class App extends Component {
       </div>
     );
   }
+}
+
+const Header = (props) => {
+  return (
+    <header>
+      <h1 className='text-center main-color mt-3'>Markdown Viewer</h1>
+      <h5 className='text-center'>By Natanael Geraldo</h5>
+    </header>
+  );
+}
+
+const HeaderCard = (props) => {
+  return (
+    <div className="card-header d-flex justify-content-between">
+      <div>
+        <FontAwesomeIcon icon={props.Icon} />
+        <span className='px-3'>{props.Value}</span>
+      </div>
+      <div>
+        <button onClick={props.FullScreen ? props.MinSize : props.MaxSize} value={props.Value}>
+          {props.FullScreen
+            ?
+            <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
+            :
+            <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+          }
+        </button>
+
+      </div>
+    </div>
+  );
 }
 
 export default App;
