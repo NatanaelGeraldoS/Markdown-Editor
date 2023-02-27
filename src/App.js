@@ -42,17 +42,14 @@ class App extends Component {
   }
   MaxSize(event) {
     var Editor = "Editor"
-    console.log(event.currentTarget.value);
     if (event.currentTarget.value === Editor) {
       this.setState({ editorFullScreen: true, viewerFullScreen: false })
     }
     else {
       this.setState({ editorFullScreen: false, viewerFullScreen: true })
-      console.log(this.state.viewerFullScreen)
     }
   }
   MinSize() {
-    console.log("min");
     this.setState({ editorFullScreen: false, viewerFullScreen: false })
   }
   render() {
@@ -61,12 +58,12 @@ class App extends Component {
     return (
       <div>
         <Header />
-        <div className='container row mx-auto justify-content-evenly mt-5'>
-          <div id='editor-side' className={`card p-0 ${this.state.editorFullScreen ? 'col-12' : this.state.viewerFullScreen ? 'd-none' : 'col-md-5'}`} >
+        <div className='container row mx-auto justify-content-evenly mt-5 pb-5'>
+          <div id='editor-side' className={`card p-0 mb-5 ${this.state.editorFullScreen ? 'col-12' : this.state.viewerFullScreen ? 'd-none' : 'col-md-5'}`} >
             <HeaderCard FullScreen={this.state.editorFullScreen} MinSize={this.MinSize} MaxSize={this.MaxSize} Value={"Editor"} Icon={faPenToSquare} />
             <textarea className='w-100 card p-2' onChange={this.transferMarkdown} style={{ minHeight: "500px" }}></textarea>
           </div>
-          <div id='viewer-side' className={`card p-0 ${this.state.viewerFullScreen ? 'col-12' : this.state.editorFullScreen ? 'd-none' : 'col-md-5'}`}>
+          <div id='viewer-side' className={`card p-0 mb-5 ${this.state.viewerFullScreen ? 'col-12' : this.state.editorFullScreen ? 'd-none' : 'col-md-5'}`}>
             <HeaderCard FullScreen={this.state.viewerFullScreen} MinSize={this.MinSize} MaxSize={this.MaxSize} Value={"Viewer"} Icon={faDesktop} />
             <ReactMarkdown className='w-100 p-2' remarkPlugins={[remarkToc, remarkGfm]}>{this.state.text}</ReactMarkdown>
           </div>
