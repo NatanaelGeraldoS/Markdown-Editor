@@ -1,17 +1,12 @@
 import './App.css';
 import React, { Component } from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
-// import { rehype } from 'rehype'
-import rehypeHighlight from 'rehype-highlight';
-import remarkToc from 'remark-toc';
-import rehypeParse from 'rehype-parse'
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
-import rehypeStringify from 'rehype-stringify'
-import { unified } from 'unified'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faDesktop, faUpRightAndDownLeftFromCenter, faDownLeftAndUpRightToCenter } from '@fortawesome/free-solid-svg-icons'
+
+import Prism from "prismjs"
+import "prismjs/themes/prism-okaidia.min.css"
+import { convertMd } from "./util/convert-md"
+
 class App extends Component {
   constructor() {
     super();
@@ -20,39 +15,32 @@ class App extends Component {
     this.MaxSize = this.MaxSize.bind(this);
     this.MinSize = this.MinSize.bind(this);
   }
-  async transferMarkdown(event) {
-    const file = await unified()
-      .use(rehypeRaw)
-      .use(rehypeParse, { fragment: true })
-      .use(rehypeSanitize, {
-        ...defaultSchema,
-        attributes: {
-          ...defaultSchema.attributes,
-          code: [
-            ...(defaultSchema.attributes.code || []),
-            // List of all allowed languages:
-            ['className', 'language-js', 'language-css', 'language-md']
-          ]
-        }
-      })
-      .use(rehypeHighlight)
-      .use(rehypeStringify)
-      .process(event.target.value)
-    this.setState({ text: file.value });
+  transferMarkdown(e) {
+    const val = e.target.value
+    this.setState({ text: convertMd(val) });
+
+  }
+
+  componentDidMount() {
+    if (this.state.text) {
+      Prism.highlightAll()
+    }
+  }
+  componentDidUpdate() {
+    if (this.state.text) {
+      Prism.highlightAll()
+    }
   }
   MaxSize(event) {
     var Editor = "Editor"
-    console.log(event.currentTarget.value);
     if (event.currentTarget.value === Editor) {
       this.setState({ editorFullScreen: true, viewerFullScreen: false })
     }
     else {
       this.setState({ editorFullScreen: false, viewerFullScreen: true })
-      console.log(this.state.viewerFullScreen)
     }
   }
   MinSize() {
-    console.log("min");
     this.setState({ editorFullScreen: false, viewerFullScreen: false })
   }
   render() {
@@ -61,14 +49,15 @@ class App extends Component {
     return (
       <div>
         <Header />
-        <div className='container row mx-auto justify-content-evenly mt-5'>
-          <div id='editor-side' className={`card p-0 ${this.state.editorFullScreen ? 'col-12' : this.state.viewerFullScreen ? 'd-none' : 'col-md-5'}`} >
+        <div className='container row mx-auto justify-content-evenly mt-5 pb-5'>
+          <div id='editor-side' className={`card p-0 mb-5 ${this.state.editorFullScreen ? 'col-12' : this.state.viewerFullScreen ? 'd-none' : 'col-md-5'}`} >
             <HeaderCard FullScreen={this.state.editorFullScreen} MinSize={this.MinSize} MaxSize={this.MaxSize} Value={"Editor"} Icon={faPenToSquare} />
             <textarea className='w-100 card p-2' onChange={this.transferMarkdown} style={{ minHeight: "500px" }}></textarea>
           </div>
-          <div id='viewer-side' className={`card p-0 ${this.state.viewerFullScreen ? 'col-12' : this.state.editorFullScreen ? 'd-none' : 'col-md-5'}`}>
+          <div id='viewer-side' className={`card p-0 mb-5 ${this.state.viewerFullScreen ? 'col-12' : this.state.editorFullScreen ? 'd-none' : 'col-md-5'}`}>
             <HeaderCard FullScreen={this.state.viewerFullScreen} MinSize={this.MinSize} MaxSize={this.MaxSize} Value={"Viewer"} Icon={faDesktop} />
-            <ReactMarkdown className='w-100 p-2' remarkPlugins={[remarkToc, remarkGfm]}>{this.state.text}</ReactMarkdown>
+            <div dangerouslySetInnerHTML={{ __html: this.state.text }} />
+
           </div>
         </div>
 
